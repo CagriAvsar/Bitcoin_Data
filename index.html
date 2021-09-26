@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <style>
+        body {
+            margin: 0;
+        }
+        
+        .container {
+            padding: 12px;
+            width: 100%;
+        }
+        
+        .show-bit {
+            margin-bottom: 8px;
+            width: 50%;
+            padding: 4px;
+            border-radius: 2px 2px 20px 2px;
+        }
+        
+        h1 {
+            color: #ac0000;
+        }
+        
+        .bg1 {
+            background-color: rgb(204, 204, 204);
+        }
+        
+        .bg2 {
+            background-color: yellow;
+        }
+        
+        .bg3 {
+            background-color: greenyellow;
+        }
+        
+        #myChart {
+            background-color: rgb(163 163 163 / 8%);
+            width: 80%;
+            height: 350px;
+            margin-top: 16px;
+            padding: 8px;
+        }
+    </style>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.5.1/dist/chart.min.js"></script>
+
+
+    <script>
+        const API_KEY = 'EgnPst8Yh4yH2Qtzq13R';
+
+        async function loadcourse() { // asyncrone function to await the download and change in json; 
+            let today = new Date(); //Variable with all informations of the current date (like a JSON);
+            today.setDate(new Date().getDate() - 1); //change only the day and deduct (-1) one day from 7 to 6 days; 
+            let startDate = today.toISOString().split('T')[0]; // 
+            let endDate = today.toISOString().split('T')[0]; //define the text from the url;
+
+            let url = `https://data.nasdaq.com/api/v3/datasets/BITFINEX/LUNAF0USTF0?start_date=${startDate}&end_date=${endDate}&api_key=${API_KEY}`;
+            let response = await fetch(url); // download the text; 
+            let responseAsJson = await response.json(); //change in json; showBitcoinToday(responseAsJson); 
+
+            showBitcoinToday(responseAsJson);
+        }
+
+        function showBitcoinToday(responseAsJson) { // in this parameter we have to define the variable for "showBitcoinToday" function;
+            let bitcoinToday = responseAsJson['dataset']['data'][0][3];
+            let bitcoinLow = responseAsJson['dataset']['data'][0][2];
+            let bitcoinHigh = responseAsJson['dataset']['data'][0][1];
+            document.getElementById('bitCoinCurrently').innerHTML = bitcoinToday;
+            document.getElementById('bitcoinShowLow').innerHTML = bitcoinLow;
+            document.getElementById('bitcoinShowHigh').innerHTML = bitcoinHigh;
+        }
+    </script>
+
+    <title>BitCourse</title>
+</head>
+
+<body onload="loadcourse()">
+
+    <div class="container">
+        <h1>What does bitcoin currently cost?</h1>
+
+        <div class="show-bit bg1">Bitcoin actually costs <b id="bitCoinCurrently">60.000</b> USD</div>
+        <div class="show-bit bg2">Bitcoin low <b id="bitcoinShowLow">45.000</b> USD</div>
+        <div class="show-bit bg3">Bitcoin high <b id="bitcoinShowHigh">80.000</b> USD</div>
+
+
+        <canvas id="myChart"></canvas>
+
+        <!-- includes the chart. -->
+        <script src="chart.js"></script>
+    </div>
+
+</body>
+
+</html>
